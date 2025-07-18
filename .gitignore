@@ -1,0 +1,36 @@
+# Dependências
+node_modules/
+vendor/
+
+# Arquivos de ambiente
+.env.local
+.env.production
+
+# Logs
+*.log
+logs/
+
+# Cache
+cache/
+tmp/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+.docker/
+
+# Banco de dados
+*.sql.backup
+*.db
+
+# Uploads
+uploads/
+files/
