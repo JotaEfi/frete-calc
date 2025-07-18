@@ -1,0 +1,59 @@
+# Arquivos de desenvolvimento
+.git
+.gitignore
+README.md
+README.Docker.md
+.env.example
+
+# Dependências que serão instaladas no container
+node_modules/
+src/vendor/
+src/composer.lock
+
+# Arquivos de log
+*.log
+logs/
+
+# Arquivos temporários
+.tmp/
+temp/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos do editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arquivos de cache
+.cache/
+.sass-cache/
+
+# Arquivos de teste
+tests/
+phpunit.xml
+.phpunit.cache/
+
+# Arquivos de cobertura
+coverage/
+clover.xml
+
+# Arquivos de backup
+*.bak
+*.backup
+*.old
+
+# Arquivos de banco de dados local
+*.sqlite
+*.db
+
+# Arquivos de configuração local específicos
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

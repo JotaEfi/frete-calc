@@ -1,36 +1,178 @@
-# Dependências
-node_modules/
-vendor/
+# ==============================================
+# ARQUIVOS DE AMBIENTE E CONFIGURAÇÃO
+# ==============================================
 
-# Arquivos de ambiente
+# Arquivo de configuração local (contém senhas e chaves)
+.env
 .env.local
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Logs
-*.log
+# ==============================================
+# DEPENDÊNCIAS E VENDOR
+# ==============================================
+
+# Dependências do Composer
+src/vendor/
+src/composer.lock
+
+# Dependências do Node.js (se usar no futuro)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================================
+# ARQUIVOS DE LOG E CACHE
+# ==============================================
+
+# Logs da aplicação
 logs/
+*.log
+storage/logs/
 
 # Cache
-cache/
-tmp/
+.cache/
+.sass-cache/
+storage/cache/
 
-# Arquivos do sistema
+# ==============================================
+# ARQUIVOS TEMPORÁRIOS E BACKUP
+# ==============================================
+
+# Arquivos temporários
+.tmp/
+temp/
+*.tmp
+*.temp
+
+# Arquivos de backup
+*.bak
+*.backup
+*.old
+*.orig
+
+# ==============================================
+# ARQUIVOS DO SISTEMA OPERACIONAL
+# ==============================================
+
+# macOS
 .DS_Store
-Thumbs.db
+.AppleDouble
+.LSOverride
 
-# IDEs
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ==============================================
+# ARQUIVOS DE EDITOR E IDE
+# ==============================================
+
+# Visual Studio Code
 .vscode/
+*.code-workspace
+
+# PhpStorm
 .idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
 *.swp
 *.swo
+*~
 
-# Docker
-.docker/
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
 
-# Banco de dados
-*.sql.backup
+# ==============================================
+# ARQUIVOS DE TESTE E COBERTURA
+# ==============================================
+
+# PHPUnit
+.phpunit.cache/
+phpunit.xml
+coverage/
+clover.xml
+
+# Jest (se usar no futuro)
+coverage/
+
+# ==============================================
+# ARQUIVOS DE BANCO DE DADOS
+# ==============================================
+
+# Banco de dados local
+*.sqlite
 *.db
+*.db-journal
 
-# Uploads
-uploads/
-files/
+# Dumps de banco
+*.sql
+!database/init.sql
+
+# ==============================================
+# ARQUIVOS DE UPLOAD E STORAGE
+# ==============================================
+
+# Arquivos de upload
+storage/uploads/
+storage/files/
+storage/images/
+
+# Arquivos de backup
+storage/backups/
+
+# ==============================================
+# DOCKER E CONTAINERIZAÇÃO
+# ==============================================
+
+# Volumes do Docker (se criados localmente)
+docker-volumes/
+
+# ==============================================
+# ARQUIVOS DE SEGURANÇA
+# ==============================================
+
+# Chaves privadas
+*.pem
+*.key
+*.crt
+*.csr
+
+# Certificados SSL
+ssl/
+
+# ==============================================
+# OUTROS ARQUIVOS
+# ==============================================
+
+# Arquivos do Sass
+*.css.map
+*.sass.map
+*.scss.map
+
+# Arquivos do webpack
+dist/
+build/
+
+# Arquivos do Composer global
+auth.json

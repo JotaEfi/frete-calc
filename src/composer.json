@@ -3,7 +3,8 @@
     "description": "Sistema de cálculo de frete",
     "type": "project",
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "twbs/bootstrap": "^5.3"
     },
     "autoload": {
         "psr-4": {

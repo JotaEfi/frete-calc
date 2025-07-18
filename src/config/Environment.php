@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Config;
+
+/**
+ * Classe para carregar e gerenciar configurações do arquivo .env
+ */
+class Environment
+{
+    private static $config = [];
+    private static $loaded = false;
+
+    /**
+     * Carrega as configurações do arquivo .env
+     */
+    public static function load($path = null)
+    {
+        if (self::$loaded) {
+            return;
+        }
+
+        $envFile = $path ?? dirname(__DIR__, 2) . '/.env';
+
+        if (!file_exists($envFile)) {
+            throw new \Exception("Arquivo .env não encontrado: {$envFile}");
+        }
+
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        foreach ($lines as $line) {
+            // Ignorar comentários
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+
+            // Processar linha com formato KEY=VALUE
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+
+                // Remover aspas se existirem
+                $value = trim($value, '"\'');
+
+                self::$config[$key] = $value;
+
+                // Definir como variável de ambiente
+                if (!array_key_exists($key, $_ENV)) {
+                    $_ENV[$key] = $value;
+                }
+            }
+        }
+
+        self::$loaded = true;
+    }
+
+    /**
+     * Obtém uma configuração do .env
+     */
+    public static function get($key, $default = null)
+    {
+        if (!self::$loaded) {
+            self::load();
+        }
+
+        return self::$config[$key] ?? $default;
+    }
+
+    /**
+     * Verifica se uma configuração existe
+     */
+    public static function has($key)
+    {
+        if (!self::$loaded) {
+            self::load();
+        }
+
+        return array_key_exists($key, self::$config);
+    }
+
+    /**
+     * Obtém todas as configurações
+     */
+    public static function all()
+    {
+        if (!self::$loaded) {
+            self::load();
+        }
+
+        return self::$config;
+    }
+
+    /**
+     * Obtém configurações do banco de dados
+     */
+    public static function database()
+    {
+        return [
+            'host' => self::get('DB_HOST', 'localhost'),
+            'port' => self::get('DB_PORT', '3306'),
+            'database' => self::get('DB_DATABASE', 'fretecalc_db'),
+            'username' => self::get('DB_USERNAME', 'root'),
+            'password' => self::get('DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'options' => [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+            ]
+        ];
+    }
+
+    /**
+     * Verifica se está em modo debug
+     */
+    public static function isDebug()
+    {
+        return self::get('APP_DEBUG', 'false') === 'true';
+    }
+
+    /**
+     * Obtém o ambiente da aplicação
+     */
+    public static function getEnvironment()
+    {
+        return self::get('APP_ENV', 'development');
+    }
+
+    /**
+     * Verifica se está em produção
+     */
+    public static function isProduction()
+    {
+        return self::getEnvironment() === 'production';
+    }
+}
