@@ -1,4 +1,4 @@
-<?php
+'<?php
 // Configurações da página
 $title = "Calcular Frete - FreteCalc";
 $active_page = "calcular";
