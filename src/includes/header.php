@@ -59,11 +59,6 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= ($active_page ?? '') === 'index' ? 'active' : '' ?>" href="index.php">
-                            <i class="bi bi-house"></i> Início
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link <?= ($active_page ?? '') === 'calcular' ? 'active' : '' ?>" href="calcular.php">
                             <i class="bi bi-calculator"></i> Calcular
                         </a>

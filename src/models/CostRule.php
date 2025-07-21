@@ -55,6 +55,24 @@ class CostRule
     }
 
     /**
+     * Busca regra por ID
+     */
+    public static function find($id)
+    {
+        try {
+            $pdo = Database::getConnection();
+            $sql = "SELECT * FROM cost_rules WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+            $data = $stmt->fetch();
+
+            return $data ? new self($data) : null;
+        } catch (Exception $e) {
+            throw new Exception("Erro ao buscar regra por ID: " . $e->getMessage());
+        }
+    }
+
+    /**
      * Busca regra por tipo
      */
     public static function getByType($type)
