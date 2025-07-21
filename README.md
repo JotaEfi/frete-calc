@@ -2,6 +2,8 @@
 
 Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bootstrap, Docker e sistema de autenticação JWT.
 
+![1753104960767](image/README/1753104960767.png)
+
 ## 📋 Funcionalidades
 
 ### 🔐 Sistema de Autenticação
@@ -11,6 +13,7 @@ Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bo
 - ✅ **Controle de sessões** via localStorage
 - ✅ **Sistema de logout** com limpeza de tokens
 - ✅ **Proteção de rotas** para usuários autenticados
+- ![1753104989464](image/README/1753104989464.png)
 
 ### 👥 Gestão de Usuários
 
@@ -28,6 +31,8 @@ Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bo
 - ✅ **Custos operacionais** (combustível, manutenção, custos fixos)
 - ✅ **Interface intuitiva** com formulário responsivo
 
+![1753105072390](image/README/1753105072390.png)
+
 ### 📊 Painel Administrativo
 
 - ✅ **Dashboard completo** com estatísticas do sistema
@@ -36,6 +41,7 @@ Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bo
 - ✅ **Gestão de usuários** (visualizar, alterar roles, excluir)
 - ✅ **Histórico de viagens** (visualizar, filtrar, excluir)
 - ✅ **Controle de acesso** restrito a administradores
+- ![1753105095311](image/README/1753105095311.png)
 
 ### 📈 Histórico e Relatórios
 
@@ -43,6 +49,7 @@ Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bo
 - ✅ **Filtros por usuário** e período
 - ✅ **Estatísticas detalhadas** (total de viagens, receita, distâncias)
 - ✅ **Exportação de dados** em formato JSON
+- ![1753105110187](image/README/1753105110187.png)
 
 ### 🎨 Interface e UX
 
@@ -52,6 +59,7 @@ Sistema web completo para cálculo de frete de cargas desenvolvido em PHP com Bo
 - ✅ **Notificações visuais** de sucesso/erro
 - ✅ **Loading states** durante operações
 - ✅ **Navegação intuitiva** com breadcrumbs
+- ![1753105129054](image/README/1753105129054.png)
 
 ### 🛡️ Segurança
 
@@ -179,14 +187,14 @@ PASSWORD_SALT=your-password-salt-here
 
 #### 3.3. Variáveis importantes do .env
 
-| Variável          | Descrição              | Valor Padrão                |
-| ----------------- | ---------------------- | --------------------------- |
-| `APP_ENV`         | Ambiente da aplicação  | `development`               |
-| `APP_DEBUG`       | Habilita modo debug    | `true`                      |
-| `DB_HOST`         | Host do banco de dados | `db`                        |
-| `DB_PASSWORD`     | Senha do banco MySQL   | `your-secure-password-here` |
-| `WEB_PORT`        | Porta do servidor web  | `8080`                      |
-| `PHPMYADMIN_PORT` | Porta do phpMyAdmin    | `8000`                      |
+| Variável           | Descrição             | Valor Padrão                 |
+| ------------------- | ----------------------- | ----------------------------- |
+| `APP_ENV`         | Ambiente da aplicação | `development`               |
+| `APP_DEBUG`       | Habilita modo debug     | `true`                      |
+| `DB_HOST`         | Host do banco de dados  | `db`                        |
+| `DB_PASSWORD`     | Senha do banco MySQL    | `your-secure-password-here` |
+| `WEB_PORT`        | Porta do servidor web   | `8080`                      |
+| `PHPMYADMIN_PORT` | Porta do phpMyAdmin     | `8000`                      |
 
 ### 4. Iniciando o Projeto
 
@@ -563,18 +571,16 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 $file = $this->findFileWithExtension($class, '.php');
 
-        // Search for Hack files if we are running on HHVM
-        if (false === $file && defined('HHVM_VERSION')) {
-            $file = $this->findFileWithExtension($class, '.hh');
+    // Search for Hack files if we are running on HHVM
+        if (false === $file && defined('HHVM_VERSION')) {$file = $this->findFileWithExtension($class, '.hh');
         }
 
-        if (null !== $this->apcuPrefix && function_exists('apcu_add')) {
+    if (null !== $this->apcuPrefix && function_exists('apcu_add')) {
             apcu_add($this->apcuPrefix . $class, $file);
         }
 
-        if (false === $file) {
-            // Remember that this class does not exist.
-            $this->missingClasses[$class] = true;
+    if (false === $file) {
+            // Remember that this class does not exist.$this->missingClasses[$class] = true;
         }
 
 no ClassLoader.php essas linhas foram removidas para evitar conflito, mas elas tem um papel importante de evitar invasão hacker no projeto em deploy, depois conferir.
