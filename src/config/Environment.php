@@ -19,10 +19,16 @@ class Environment
             return;
         }
 
-        $envFile = $path ?? dirname(__DIR__, 2) . '/.env';
+        // Corrigir o caminho para procurar o .env na pasta atual ou no diretório pai
+        $envFile = $path ?? __DIR__ . '/../.env';
+
+        // Se não encontrar, tenta na pasta atual
+        if (!file_exists($envFile)) {
+            $envFile = __DIR__ . '/.env';
+        }
 
         if (!file_exists($envFile)) {
-            throw new \Exception("Arquivo .env não encontrado: {$envFile}");
+            throw new \Exception("Arquivo .env não encontrado. Procurado em: {$envFile}");
         }
 
         $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

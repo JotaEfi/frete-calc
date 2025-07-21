@@ -2,14 +2,24 @@
 // Carregar autoload do Composer
 require_once 'vendor/autoload.php';
 
-// Agora você pode usar suas classes sem require manual
+// Configurações da página
+$title = "Calcular Frete - FreteCalc";
+$active_page = "calcular";
+
+// Carregar autoload do Composer
+
+// Incluir header
+include 'includes/header.php';
+
+
+
 use App\Models\FreteCalculator;
 use App\Controllers\FreteController;
 
 // Exemplo de uso
 try {
     // Suas classes serão carregadas automaticamente
-    $message = "Sistema de Cálculo de Frete - Autoload PSR-4 funcionando!";
+    $message = "Aqui você pode calcular de forma mais rápida o valor de seu frete de acordo com as diversas variáveis independentes que formam ele!";
 
 } catch (Exception $e) {
     $message = "Erro: " . $e->getMessage();
@@ -66,39 +76,6 @@ try {
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <i class="bi bi-truck"></i> FreteCalc
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    
-            
-                    <li class="nav-item">
-                        <a class="nav-link" href="historico.php">
-                            <i class="bi bi-clock-history"></i> Histórico
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contato.php">
-                            <i class="bi bi-envelope"></i> Contato
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="auth.php">
-                            <i class="bi bi-envelope"></i> Contato
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -108,15 +85,13 @@ try {
                         <i class="bi bi-calculator"></i> Sistema de Cálculo de Frete
                     </h1>
                     <p class="lead mb-4"><?php echo $message; ?></p>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <div class="d-grid gap-2 ">
                         <!-- Botão que redireciona para calcular.php -->
-                        <a href="calcular.php" class="btn btn-primary btn-lg px-4 me-md-2">
-                            <i class="bi bi-play-fill"></i> Calcular Frete
+                        <a href="calcular.php" class="btn btn-primary btn-lg px-4 me-md-2 ">
+                            <i class="bi bi-play-fill "></i> Calcular Frete
                         </a>
                         <!-- Botão que rola para a seção de informações -->
-                        <a href="#features" class="btn btn-outline-light btn-lg px-4">
-                            <i class="bi bi-info-circle"></i> Saiba Mais
-                        </a>
+                      
                     </div>
                 </div>
                 <div class="col-lg-6">
