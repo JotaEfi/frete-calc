@@ -79,9 +79,21 @@ class Environment
     private static function loadFromEnvironmentVariables()
     {
         $envVars = [
-            'MYSQL_URL', 'APP_SECRET', 'PASSWORD_SALT', 'APP_ENV', 'APP_DEBUG',
-            'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD',
-            'MYSQLHOST', 'MYSQLPORT', 'MYSQLDATABASE', 'MYSQLUSER', 'MYSQLPASSWORD'
+            'MYSQL_URL',
+            'APP_SECRET',
+            'PASSWORD_SALT',
+            'APP_ENV',
+            'APP_DEBUG',
+            'DB_HOST',
+            'DB_PORT',
+            'DB_DATABASE',
+            'DB_USERNAME',
+            'DB_PASSWORD',
+            'MYSQLHOST',
+            'MYSQLPORT',
+            'MYSQLDATABASE',
+            'MYSQLUSER',
+            'MYSQLPASSWORD'
         ];
 
         foreach ($envVars as $var) {

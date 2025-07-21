@@ -4,14 +4,15 @@ $title = "Calcular Frete - FreteCalc";
 $active_page = "calcular";
 
 // Sistema de carregamento robusto para Railway
-function loadAutoloader() {
+function loadAutoloader()
+{
     $paths = [
         'vendor/autoload.php',
         __DIR__ . '/vendor/autoload.php',
         __DIR__ . '/../vendor/autoload.php',
         '/var/www/html/vendor/autoload.php'
     ];
-    
+
     foreach ($paths as $path) {
         if (file_exists($path)) {
             require_once $path;
@@ -26,13 +27,14 @@ if (!loadAutoloader()) {
 }
 
 // Carregar classes manualmente se necessário (fallback)
-function loadClassManually($className) {
+function loadClassManually($className)
+{
     $classMap = [
         'App\\Config\\Environment' => __DIR__ . '/config/Environment.php',
         'App\\Config\\Database' => __DIR__ . '/config/Database.php',
         'App\\Models\\Vehicle' => __DIR__ . '/models/Vehicle.php',
     ];
-    
+
     if (isset($classMap[$className]) && file_exists($classMap[$className])) {
         require_once $classMap[$className];
         return true;
@@ -81,8 +83,12 @@ try {
     $vehicles = [(object)[
         'id' => 1,
         'name' => 'Caminhão Padrão (sem conexão DB)',
-        'getId' => function() { return 1; },
-        'getName' => function() { return 'Caminhão Padrão (sem conexão DB)'; }
+        'getId' => function () {
+            return 1;
+        },
+        'getName' => function () {
+            return 'Caminhão Padrão (sem conexão DB)';
+        }
     ]];
 }
 
