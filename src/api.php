@@ -5,15 +5,73 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Carregar autoload do Composer - com fallback para diferentes ambientes
-if (file_exists('vendor/autoload.php')) {
-    require_once 'vendor/autoload.php';
-} elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-} else {
-    die(json_encode(['success' => false, 'error' => 'Autoload não encontrado. Execute: composer install']));
+// Sistema de carregamento robusto para Railway
+function loadAutoloader() {
+    $paths = [
+        'vendor/autoload.php',
+        __DIR__ . '/vendor/autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+        '/var/www/html/vendor/autoload.php'
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return true;
+        }
+    }
+    return false;
+}
+
+if (!loadAutoloader()) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Autoload não encontrado']);
+    exit;
+}
+
+// Carregar classes manualmente se necessário (fallback)
+function loadClassManually($className) {
+    $classMap = [
+        'App\\Config\\Environment' => __DIR__ . '/config/Environment.php',
+        'App\\Config\\Database' => __DIR__ . '/config/Database.php',
+        'App\\Config\\JWTManager' => __DIR__ . '/config/JWTManager.php',
+        'App\\Models\\Vehicle' => __DIR__ . '/models/Vehicle.php',
+        'App\\Models\\CostRule' => __DIR__ . '/models/CostRule.php',
+        'App\\Models\\Trip' => __DIR__ . '/models/Trip.php',
+        'App\\Models\\User' => __DIR__ . '/models/User.php',
+    ];
+    
+    if (isset($classMap[$className]) && file_exists($classMap[$className])) {
+        require_once $classMap[$className];
+        return true;
+    }
+    return false;
+}
+
+// Registrar autoloader manual como fallback
+spl_autoload_register('loadClassManually');
+
+// Tentar carregar classes necessárias
+try {
+    $classes = [
+        'App\\Config\\Environment',
+        'App\\Config\\JWTManager', 
+        'App\\Models\\Vehicle',
+        'App\\Models\\CostRule',
+        'App\\Models\\Trip',
+        'App\\Models\\User'
+    ];
+    
+    foreach ($classes as $class) {
+        if (!class_exists($class)) {
+            loadClassManually($class);
+        }
+    }
+} catch (Exception $e) {
+    error_log("Erro ao carregar classes: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Erro ao carregar classes necessárias']);
+    exit;
 }
 
 use App\Config\Environment;
@@ -23,9 +81,11 @@ use App\Models\CostRule;
 use App\Models\Trip;
 use App\Models\User;
 
-// Carregar configurações
+// Carregar configurações de forma segura
 try {
-    Environment::load();
+    if (class_exists('App\\Config\\Environment')) {
+        Environment::load();
+    }
 } catch (Exception $e) {
     error_log("Erro ao carregar environment: " . $e->getMessage());
 }
@@ -214,4 +274,11 @@ try {
         'success' => false,
         'error' => $e->getMessage()
     ]);
+} catch (Error $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Erro fatal: ' . $e->getMessage()
+    ]);
 }
+?>
