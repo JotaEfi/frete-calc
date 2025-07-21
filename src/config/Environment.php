@@ -101,6 +101,30 @@ class Environment
      */
     public static function database()
     {
+        // Se existe MYSQL_URL (Railway), usar ela
+        $mysqlUrl = self::get('MYSQL_URL');
+        
+        if ($mysqlUrl) {
+            // Parse da URL: mysql://user:password@host:port/database
+            $parsed = parse_url($mysqlUrl);
+            
+            return [
+                'host' => $parsed['host'] ?? 'localhost',
+                'port' => $parsed['port'] ?? '3306',
+                'database' => ltrim($parsed['path'] ?? '/fretecalc_db', '/'),
+                'username' => $parsed['user'] ?? 'root',
+                'password' => $parsed['pass'] ?? '',
+                'charset' => 'utf8mb4',
+                'options' => [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
+                    \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+                ]
+            ];
+        }
+        
+        // Fallback para variáveis individuais (desenvolvimento local)
         return [
             'host' => self::get('DB_HOST', 'localhost'),
             'port' => self::get('DB_PORT', '3306'),
