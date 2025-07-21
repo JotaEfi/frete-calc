@@ -11,11 +11,18 @@ class Environment
     private static $loaded = false;
 
     /**
-     * Carrega as configurações do arquivo .env
+     * Carrega as configurações do arquivo .env ou variáveis de ambiente do Railway
      */
     public static function load($path = null)
     {
         if (self::$loaded) {
+            return;
+        }
+
+        // No Railway, primeiro tentar carregar das variáveis de ambiente do sistema
+        if (getenv('RAILWAY_ENVIRONMENT') || getenv('MYSQL_URL')) {
+            self::loadFromEnvironmentVariables();
+            self::$loaded = true;
             return;
         }
 
@@ -28,6 +35,12 @@ class Environment
         }
 
         if (!file_exists($envFile)) {
+            // Em produção, pode não ter arquivo .env, usar apenas variáveis de ambiente
+            if (self::isProduction()) {
+                self::loadFromEnvironmentVariables();
+                self::$loaded = true;
+                return;
+            }
             throw new \Exception("Arquivo .env não encontrado. Procurado em: {$envFile}");
         }
 
@@ -58,6 +71,26 @@ class Environment
         }
 
         self::$loaded = true;
+    }
+
+    /**
+     * Carrega configurações das variáveis de ambiente do sistema (Railway)
+     */
+    private static function loadFromEnvironmentVariables()
+    {
+        $envVars = [
+            'MYSQL_URL', 'APP_SECRET', 'PASSWORD_SALT', 'APP_ENV', 'APP_DEBUG',
+            'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD',
+            'MYSQLHOST', 'MYSQLPORT', 'MYSQLDATABASE', 'MYSQLUSER', 'MYSQLPASSWORD'
+        ];
+
+        foreach ($envVars as $var) {
+            $value = getenv($var);
+            if ($value !== false) {
+                self::$config[$var] = $value;
+                $_ENV[$var] = $value;
+            }
+        }
     }
 
     /**

@@ -3,34 +3,87 @@
 $title = "Calcular Frete - FreteCalc";
 $active_page = "calcular";
 
-// Carregar autoload do Composer - com fallback para diferentes ambientes
-if (file_exists('vendor/autoload.php')) {
-    require_once 'vendor/autoload.php';
-} elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-} else {
-    die('Autoload não encontrado. Execute: composer install');
+// Sistema de carregamento robusto para Railway
+function loadAutoloader() {
+    $paths = [
+        'vendor/autoload.php',
+        __DIR__ . '/vendor/autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+        '/var/www/html/vendor/autoload.php'
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return true;
+        }
+    }
+    return false;
+}
+
+if (!loadAutoloader()) {
+    die('Erro: Autoload do Composer não encontrado. Verifique se as dependências foram instaladas.');
+}
+
+// Carregar classes manualmente se necessário (fallback)
+function loadClassManually($className) {
+    $classMap = [
+        'App\\Config\\Environment' => __DIR__ . '/config/Environment.php',
+        'App\\Config\\Database' => __DIR__ . '/config/Database.php',
+        'App\\Models\\Vehicle' => __DIR__ . '/models/Vehicle.php',
+    ];
+    
+    if (isset($classMap[$className]) && file_exists($classMap[$className])) {
+        require_once $classMap[$className];
+        return true;
+    }
+    return false;
+}
+
+// Registrar autoloader manual como fallback
+spl_autoload_register('loadClassManually');
+
+// Tentar carregar classes necessárias
+try {
+    if (!class_exists('App\\Config\\Environment')) {
+        loadClassManually('App\\Config\\Environment');
+    }
+    if (!class_exists('App\\Models\\Vehicle')) {
+        loadClassManually('App\\Models\\Vehicle');
+    }
+} catch (Exception $e) {
+    error_log("Erro ao carregar classes: " . $e->getMessage());
 }
 
 // Importar classes necessárias
 use App\Models\Vehicle;
 use App\Config\Environment;
 
-// Carregar configurações
+// Carregar configurações de forma segura
 try {
-    Environment::load();
+    if (class_exists('App\\Config\\Environment')) {
+        Environment::load();
+    }
 } catch (Exception $e) {
     error_log("Erro ao carregar environment: " . $e->getMessage());
 }
 
-// Buscar veículos disponíveis
+// Buscar veículos disponíveis com tratamento de erro
+$vehicles = [];
 try {
-    $vehicles = Vehicle::all();
+    if (class_exists('App\\Models\\Vehicle')) {
+        $vehicles = Vehicle::all();
+    }
 } catch (Exception $e) {
     $vehicles = [];
     error_log("Erro ao buscar veículos: " . $e->getMessage());
+    // Em caso de erro, criar um veículo padrão para não quebrar a página
+    $vehicles = [(object)[
+        'id' => 1,
+        'name' => 'Caminhão Padrão (sem conexão DB)',
+        'getId' => function() { return 1; },
+        'getName' => function() { return 'Caminhão Padrão (sem conexão DB)'; }
+    ]];
 }
 
 // Incluir header
