@@ -3,11 +3,27 @@
 $title = "Calcular Frete - FreteCalc";
 $active_page = "calcular";
 
-// Carregar autoload do Composer
-require_once 'vendor/autoload.php';
+// Carregar autoload do Composer - com fallback para diferentes ambientes
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    die('Autoload não encontrado. Execute: composer install');
+}
 
 // Importar classes necessárias
 use App\Models\Vehicle;
+use App\Config\Environment;
+
+// Carregar configurações
+try {
+    Environment::load();
+} catch (Exception $e) {
+    error_log("Erro ao carregar environment: " . $e->getMessage());
+}
 
 // Buscar veículos disponíveis
 try {
@@ -221,7 +237,6 @@ include 'includes/header.php';
                 showNotification('Erro na comunicação com o servidor: ' + error.message, 'error');
             });
     });
-    
 </script>
 
 <?php

@@ -5,8 +5,16 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Carregar autoload do Composer
-require_once 'vendor/autoload.php';
+// Carregar autoload do Composer - com fallback para diferentes ambientes
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    die(json_encode(['success' => false, 'error' => 'Autoload não encontrado. Execute: composer install']));
+}
 
 use App\Config\Environment;
 use App\Config\JWTManager;
@@ -16,7 +24,11 @@ use App\Models\Trip;
 use App\Models\User;
 
 // Carregar configurações
-Environment::load();
+try {
+    Environment::load();
+} catch (Exception $e) {
+    error_log("Erro ao carregar environment: " . $e->getMessage());
+}
 
 try {
     $action = $_GET['action'] ?? '';

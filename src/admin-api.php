@@ -2,23 +2,20 @@
 // Configuração do header para JSON
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Tratar preflight OPTIONS
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// Carregar autoload do Composer - com fallback para diferentes ambientes
+if (file_exists('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    die(json_encode(['success' => false, 'error' => 'Autoload não encontrado. Execute: composer install']));
 }
 
-// Habilitar exibição de erros para debug
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// Carregar autoload do Composer
-require_once 'vendor/autoload.php';
-
-// Declarações use
 use App\Config\Environment;
 use App\Config\JWTManager;
 use App\Models\User;

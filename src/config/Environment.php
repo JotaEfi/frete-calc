@@ -103,11 +103,11 @@ class Environment
     {
         // Se existe MYSQL_URL (Railway), usar ela
         $mysqlUrl = self::get('MYSQL_URL');
-        
+
         if ($mysqlUrl) {
             // Parse da URL: mysql://user:password@host:port/database
             $parsed = parse_url($mysqlUrl);
-            
+
             return [
                 'host' => $parsed['host'] ?? 'localhost',
                 'port' => $parsed['port'] ?? '3306',
@@ -123,7 +123,7 @@ class Environment
                 ]
             ];
         }
-        
+
         // Fallback para variáveis individuais (desenvolvimento local)
         return [
             'host' => self::get('DB_HOST', 'localhost'),
