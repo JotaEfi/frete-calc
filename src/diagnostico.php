@@ -18,8 +18,27 @@ if (file_exists('vendor/autoload.php')) {
 echo "<h2>2. Verificando Variáveis de Ambiente</h2>";
 $mysqlUrl = getenv('MYSQL_URL');
 echo "MYSQL_URL: " . ($mysqlUrl ? "<span class='success'>✅ Definida: " . substr($mysqlUrl, 0, 50) . "...</span>" : "<span class='error'>❌ Não definida</span>") . "<br>";
+
+// Verificar se a MYSQL_URL está mal formatada
+if ($mysqlUrl && (strpos($mysqlUrl, '{{') !== false || strpos($mysqlUrl, '}}') !== false)) {
+    echo "<span class='error'>⚠️ PROBLEMA: MYSQL_URL contém {{ }} - não foi substituída corretamente pelo Railway!</span><br>";
+    echo "<span class='warning'>📝 Corrija no Railway: use <code>\${{ MySQL.MYSQL_URL }}</code> (com \$ no início)</span><br>";
+}
+
 echo "APP_SECRET: " . (getenv('APP_SECRET') ? "<span class='success'>✅ Definida</span>" : "<span class='error'>❌ Não definida</span>") . "<br>";
 echo "PASSWORD_SALT: " . (getenv('PASSWORD_SALT') ? "<span class='success'>✅ Definida</span>" : "<span class='error'>❌ Não definida</span>") . "<br>";
+
+// Verificar variáveis individuais do Railway como fallback
+echo "<h3>2.1 Variáveis Individuais do Railway (Fallback)</h3>";
+$railwayVars = ['MYSQLHOST', 'MYSQLPORT', 'MYSQLDATABASE', 'MYSQLUSER', 'MYSQLPASSWORD'];
+foreach ($railwayVars as $var) {
+    $value = getenv($var);
+    if ($value) {
+        echo "<span class='success'>✅ {$var}: " . ($var === 'MYSQLPASSWORD' ? '***' : $value) . "</span><br>";
+    } else {
+        echo "<span class='warning'>⚠️ {$var}: Não definida</span><br>";
+    }
+}
 
 // 3. Verificar estrutura de arquivos
 echo "<h2>3. Verificando Estrutura de Arquivos</h2>";
@@ -45,15 +64,14 @@ echo "<h2>4. Testando Carregamento de Classes</h2>";
 if (file_exists('config/Environment.php')) {
     require_once 'config/Environment.php';
     echo "<span class='success'>✅ Environment.php carregado manualmente</span><br>";
-    
+
     try {
         if (class_exists('App\\Config\\Environment')) {
             echo "<span class='success'>✅ Classe App\\Config\\Environment disponível</span><br>";
-            
+
             // Testar método load
             App\Config\Environment::load();
             echo "<span class='success'>✅ Environment::load() executado</span><br>";
-            
         } else {
             echo "<span class='error'>❌ Classe App\\Config\\Environment não encontrada após require</span><br>";
         }
@@ -79,22 +97,22 @@ if (!$mysqlUrl) {
         $dbname = ltrim($parsed['path'] ?? '/test', '/');
         $username = $parsed['user'] ?? 'root';
         $password = $parsed['pass'] ?? '';
-        
+
         $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
         $pdo = new PDO($dsn, $username, $password, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
         ]);
-        
+
         echo "<span class='success'>✅ Conexão MySQL estabelecida</span><br>";
         echo "<span class='success'>✅ Host: {$host}:{$port}</span><br>";
         echo "<span class='success'>✅ Database: {$dbname}</span><br>";
-        
+
         // Testar query
         $stmt = $pdo->query("SELECT 1 as test");
         $result = $stmt->fetch();
         echo "<span class='success'>✅ Query de teste executada: " . $result['test'] . "</span><br>";
-        
+
         // Verificar tabelas
         echo "<h3>5.1 Verificando Tabelas</h3>";
         $tables = ['users', 'vehicles', 'cost_rules', 'trips'];
@@ -106,7 +124,6 @@ if (!$mysqlUrl) {
                 echo "<span class='error'>❌ Tabela '{$table}' não existe</span><br>";
             }
         }
-        
     } catch (Exception $e) {
         echo "<span class='error'>❌ Erro na conexão MySQL: " . $e->getMessage() . "</span><br>";
     }
@@ -145,10 +162,10 @@ if (!$mysqlUrl) {
 ?>
 
 <script>
-// Auto-refresh a cada 30 segundos para monitorar mudanças
-setTimeout(() => {
-    location.reload();
-}, 30000);
+    // Auto-refresh a cada 30 segundos para monitorar mudanças
+    setTimeout(() => {
+        location.reload();
+    }, 30000);
 
-console.log('Diagnóstico Railway - Auto-refresh em 30s');
+    console.log('Diagnóstico Railway - Auto-refresh em 30s');
 </script>

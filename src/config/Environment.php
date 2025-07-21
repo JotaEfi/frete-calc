@@ -146,19 +146,46 @@ class Environment
      */
     public static function database()
     {
-        // Se existe MYSQL_URL (Railway), usar ela
+        // Tentar primeiro a MYSQL_URL (Railway)
         $mysqlUrl = self::get('MYSQL_URL');
 
-        if ($mysqlUrl) {
+        // Verificar se a URL foi corretamente substituída (não pode conter {{ }})
+        if ($mysqlUrl && !strpos($mysqlUrl, '{{') && !strpos($mysqlUrl, '}}')) {
             // Parse da URL: mysql://user:password@host:port/database
             $parsed = parse_url($mysqlUrl);
 
+            if ($parsed && isset($parsed['host'])) {
+                return [
+                    'host' => $parsed['host'],
+                    'port' => $parsed['port'] ?? '3306',
+                    'database' => ltrim($parsed['path'] ?? '/fretecalc_db', '/'),
+                    'username' => $parsed['user'] ?? 'root',
+                    'password' => $parsed['pass'] ?? '',
+                    'charset' => 'utf8mb4',
+                    'options' => [
+                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        \PDO::ATTR_EMULATE_PREPARES => false,
+                        \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+                    ]
+                ];
+            }
+        }
+
+        // Fallback para variáveis individuais do Railway
+        $railwayHost = self::get('MYSQLHOST');
+        $railwayPort = self::get('MYSQLPORT');
+        $railwayDb = self::get('MYSQLDATABASE');
+        $railwayUser = self::get('MYSQLUSER');
+        $railwayPass = self::get('MYSQLPASSWORD');
+
+        if ($railwayHost) {
             return [
-                'host' => $parsed['host'] ?? 'localhost',
-                'port' => $parsed['port'] ?? '3306',
-                'database' => ltrim($parsed['path'] ?? '/fretecalc_db', '/'),
-                'username' => $parsed['user'] ?? 'root',
-                'password' => $parsed['pass'] ?? '',
+                'host' => $railwayHost,
+                'port' => $railwayPort ?? '3306',
+                'database' => $railwayDb ?? 'railway',
+                'username' => $railwayUser ?? 'root',
+                'password' => $railwayPass ?? '',
                 'charset' => 'utf8mb4',
                 'options' => [
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
@@ -169,7 +196,7 @@ class Environment
             ];
         }
 
-        // Fallback para variáveis individuais (desenvolvimento local)
+        // Fallback final para desenvolvimento local
         return [
             'host' => self::get('DB_HOST', 'localhost'),
             'port' => self::get('DB_PORT', '3306'),
