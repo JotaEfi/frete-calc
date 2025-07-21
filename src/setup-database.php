@@ -122,18 +122,18 @@ $vehicleCount = $stmt->fetch()['count'];
 
 if ($vehicleCount == 0) {
     echo "<span class='info'>📝 Inserindo veículos padrão...</span><br>";
-    
+
     $vehicles = [
         ['Caminhão Truck', 'truck', 3.5, 25.00, 0.80, 'Caminhão para cargas pesadas'],
         ['Van de Carga', 'van', 8.0, 15.00, 0.45, 'Van para entregas urbanas'],
         ['Carreta', 'carreta', 2.8, 35.00, 1.20, 'Carreta para longas distâncias']
     ];
-    
+
     $stmt = $pdo->prepare("
         INSERT INTO vehicles (name, type, fuel_consumption, fixed_cost_per_hour, depreciation_maintenance, description)
         VALUES (?, ?, ?, ?, ?, ?)
     ");
-    
+
     foreach ($vehicles as $vehicle) {
         try {
             $stmt->execute($vehicle);
@@ -150,19 +150,19 @@ $rulesCount = $stmt->fetch()['count'];
 
 if ($rulesCount == 0) {
     echo "<span class='info'>📝 Inserindo regras de custo padrão...</span><br>";
-    
+
     $rules = [
         ['fuel_price', 'Preço do Combustível', 6.50, 0, 'Preço médio do diesel por litro'],
         ['ad_valorem', 'Taxa Ad Valorem', 0.0030, 1, 'Taxa de 0.3% sobre o valor da carga'],
         ['gris', 'GRIS', 0.0015, 1, 'Gerenciamento de Risco - 0.15% sobre valor da carga'],
         ['icms', 'ICMS', 0.12, 1, 'Imposto sobre Circulação de Mercadorias - 12%']
     ];
-    
+
     $stmt = $pdo->prepare("
         INSERT INTO cost_rules (type, name, value, is_percentage, description)
         VALUES (?, ?, ?, ?, ?)
     ");
-    
+
     foreach ($rules as $rule) {
         try {
             $stmt->execute($rule);
@@ -179,10 +179,10 @@ $adminCount = $stmt->fetch()['count'];
 
 if ($adminCount == 0) {
     echo "<span class='info'>📝 Criando usuário administrador padrão...</span><br>";
-    
+
     $adminEmail = 'admin@fretecalc.com';
     $adminPassword = password_hash('admin123', PASSWORD_BCRYPT);
-    
+
     try {
         $stmt = $pdo->prepare("
             INSERT INTO users (name, email, password, role)
@@ -222,4 +222,3 @@ echo "</ol>";
 echo "</div>";
 
 echo "<p><em>Você pode executar este script novamente se precisar recriar as tabelas.</em></p>";
-?>

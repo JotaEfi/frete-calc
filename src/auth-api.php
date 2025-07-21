@@ -6,14 +6,15 @@ header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Sistema de carregamento robusto para Railway
-function loadAutoloader() {
+function loadAutoloader()
+{
     $paths = [
         'vendor/autoload.php',
         __DIR__ . '/vendor/autoload.php',
         __DIR__ . '/../vendor/autoload.php',
         '/var/www/html/vendor/autoload.php'
     ];
-    
+
     foreach ($paths as $path) {
         if (file_exists($path)) {
             require_once $path;
@@ -30,14 +31,15 @@ if (!loadAutoloader()) {
 }
 
 // Carregar classes manualmente se necessário (fallback)
-function loadClassManually($className) {
+function loadClassManually($className)
+{
     $classMap = [
         'App\\Config\\Environment' => __DIR__ . '/config/Environment.php',
         'App\\Config\\Database' => __DIR__ . '/config/Database.php',
         'App\\Config\\JWTManager' => __DIR__ . '/config/JWTManager.php',
         'App\\Models\\User' => __DIR__ . '/models/User.php',
     ];
-    
+
     if (isset($classMap[$className]) && file_exists($classMap[$className])) {
         require_once $classMap[$className];
         return true;
@@ -206,7 +208,6 @@ try {
         default:
             throw new Exception('Ação não encontrada: ' . $action);
     }
-
 } catch (Exception $e) {
     http_response_code(400);
     echo json_encode([
@@ -220,4 +221,3 @@ try {
         'error' => 'Erro fatal: ' . $e->getMessage()
     ]);
 }
-?>
